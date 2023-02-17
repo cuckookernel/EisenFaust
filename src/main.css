@@ -1,0 +1,84 @@
+
+Label  {
+    padding: 1 2;
+}
+
+#app-grid {
+    layout: grid;
+    grid-size: 2;  /* two columns */
+    grid-columns: 1fr 4fr;
+    /* grid-columns: 1fr; */
+    /* grid-rows: 1fr; */
+}
+
+#cmd-groups {
+    height: 100%;
+    width: 100%;
+    row-span: 2;
+    background: $panel;
+    align-horizontal: left;
+    border: gray;
+}
+
+#cmd-groups:focus {
+    border: cornflowerblue;
+}
+
+#cmd-tmpls {
+    height: 100%;
+    width: 100%;
+    row-span: 2;
+    background: $panel;
+    offset-x: -100%;
+    border: gray;
+}
+
+#cmd-tmpls:focus {
+    border: darkorange;
+}
+
+
+#right-pane {
+    height: auto; /* 100%; */
+    width: 100%;
+    column-span: 2;
+    background: #0a0a0a;
+    /* border: mediumvioletred; */
+
+}
+
+/* inside right-pane */
+#top-info-bar {
+    background: midnightblue;
+}
+
+#template-bar {
+    background: darkblue;
+    align-vertical: bottom;
+}
+
+CmdGroupsSidebar {
+    width: 25;
+    background: $panel;
+    transition: offset 100ms in_out_cubic;
+    layer: overlay;
+    align-horizontal: left;
+}
+
+CmdGroupsSidebar.-hidden {
+    offset-x: -100%;
+}
+
+CmdTmplsSidebar {
+    width: 25;
+    background: $panel;
+    transition: offset 100ms in_out_cubic;
+    layer: overlay;
+    display: block;
+    align-horizontal: left;
+}
+
+CmdTmplsSidebar.-hidden {
+    offset-x: -100%;
+    display: none;
+}
