@@ -1,1 +1,6 @@
 textual/
+.idea/
+target/
+Cargo.lock
+.vscode/
+
