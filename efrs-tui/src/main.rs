@@ -28,9 +28,11 @@ struct Cli {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    println!("adasd");
+    println!("Attempting to start EisenFaust-rs TUI");
     let cli: Cli = argh::from_env();
     let tick_rate = Duration::from_millis(cli.tick_rate);
     run(tick_rate, cli.enhanced_graphics)?;
+
+    println!("EisenFaust-rs TUI ended");
     Ok(())
 }

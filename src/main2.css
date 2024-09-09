@@ -1,0 +1,66 @@
+
+Screen {
+    layout: horizontal
+
+}
+
+SidebarContainer {
+    width: 25;
+    /* height: 100%; */
+    /* layer: overlay; */
+    /* dock: left; */
+    /* layer: overlay; */
+}
+
+SidebarContainer.-hidden {
+    display: none;
+}
+
+#cmd-groups.-hidden {
+    display: none;
+}
+
+#cmd-tmpls.-hidden {
+    display: none;
+}
+
+
+/* Widgets on right pane */
+#right-pane {
+    height: 100%;
+    background: #220a0a;
+}
+
+
+/* inside right-pane */
+#top-info-bar {
+    background: #0f2b41;
+    color: navajowhite;
+    dock: top;
+    height: 2;
+}
+
+#output-pane {
+    height: auto;
+}
+
+#template-bar {
+    background: #aa7744;
+    color: #F4F8F7;
+    /* dock: bottom; */
+    height: 1;
+}
+
+ArgsForm {
+    height: 6;
+    dock: bottom
+}
+
+ArgsForm.-hidden {
+
+    display: none
+}
+
+.arg-input {
+    height: 1;
+}

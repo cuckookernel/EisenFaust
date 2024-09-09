@@ -1,6 +1,9 @@
 use crate::app::App;
 use crate::app::Screen;
 use crate::app::WhatToShow;
+use crate::exec_cell::ExecCell;
+use tui::text::Spans;
+use tui::widgets::Paragraph;
 use tui::{
     backend::Backend,
     layout::{Constraint, Direction, Layout, Rect},
@@ -28,22 +31,23 @@ pub fn draw<B: Backend>(f: &mut Frame<B>, app: &mut App) {
         .constraints([C::Min(0), C::Length(1)].as_ref()).split(f.size());
     match app.active_screen {
         Screen::Commander => {
-            draw_commander_tab(f, app, chunks[0])
+            draw_commander_screen(f, app, chunks[0])
         },
         Screen::LogMessages => {
-            draw_msgs_tab(f, app, chunks[0])
+            draw_log_msgs_screen(f, app, chunks[0])
         }
     }
 }
 
 
-fn draw_commander_tab<B: Backend>(f: &mut Frame<B>, app: &mut App, area: Rect)
+fn draw_commander_screen<B: Backend>(f: &mut Frame<B>, app: &mut App, area: Rect)
 {
     let chunks = Layout::default()
         .constraints([Constraint::Ratio(16, 100),
                   Constraint::Min(8)])
         .direction(Direction::Horizontal)
         .split(area);
+
 
     if app.to_show.contains(WhatToShow::CmdGroups) {
         draw_list(f, &app.cmd_groups.items,
@@ -54,10 +58,12 @@ fn draw_commander_tab<B: Backend>(f: &mut Frame<B>, app: &mut App, area: Rect)
                   app.cmd_picker.state.selected(),
                   &"Commands", chunks[0]);
     }
+
+    draw_cells(f, &app.exec_cells, Some(0), chunks[1])
 }
 
 
-fn draw_msgs_tab<B>(f: &mut Frame<B>, app: &mut App, area: Rect)
+fn draw_log_msgs_screen<B>(f: &mut Frame<B>, app: &mut App, area: Rect)
 where
     B: Backend,
 {
@@ -109,4 +115,17 @@ fn draw_list<B: Backend>(f: &mut Frame<B>, a_list: &Vec<String>, selected_idx: O
         .borders(Borders::ALL));
 
     f.render_widget(list, area);
+}
+
+fn draw_cells<B: Backend>(f: &mut Frame<B>, cells: &Vec<ExecCell>,
+                          _sel_idx: Option<usize>, area: Rect) {
+    if cells.len() == 0 { return }
+
+    let cell = &cells[cells.len() -1];
+    let text = vec![Spans::from(vec![Span::raw(cell.cmd_tmpl.clone())])];
+
+    // https://docs.rs/tui/latest/tui/widgets/struct.Paragraph.html
+    let par = Paragraph::new(text);
+
+    f.render_widget(par, area)
 }

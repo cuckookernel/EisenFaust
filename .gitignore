@@ -3,4 +3,5 @@ textual/
 target/
 Cargo.lock
 .vscode/
+log.txt
 

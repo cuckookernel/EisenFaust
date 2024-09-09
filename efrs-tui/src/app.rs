@@ -1,8 +1,13 @@
-use std::collections::HashMap;
+use std::sync::mpsc::TryRecvError;
+// use async_process::{Command, Stdio, ChildStderr};
+// use futures_lite::io::BufReader;
+use std::{collections::HashMap};
 
 use bitflags::bitflags;
 use crossterm::event::{KeyEvent, KeyCode, KeyModifiers as KM};
-use crate::{app_util::StatefulList, exec_cell::ExecCell};
+use crate::app_util::StatefulList;
+use crate::exec_cell::{ExecCell, CmdMsgType};
+use chrono::Utc;
 
 pub enum Screen {
     Commander,
@@ -151,7 +156,7 @@ impl<'a> App<'a> {
                 self.push_msg(&"No grp_idx");
             }
         },
-        _ => self.push_msg(&format!("Unhandled key event on StatefulList {:?}", kev))
+        _ => self.push_msg(format!("Unhandled key event on StatefulList {:?}", kev))
     }
   }
 
@@ -165,40 +170,54 @@ impl<'a> App<'a> {
         },
         KeyCode::Enter => {
             if let Some(cmd_idx) = self.cmd_picker.state.selected() {
-                self.focus_elem = FocusElem::ExecPanel;
-                self.push_msg(&"Exec Panel gained focus");
+                let cmd_tmpl = self.cmd_picker.items[cmd_idx].clone();
+                let mut exec_cell = ExecCell::new(cmd_tmpl);
+                exec_cell.run_cmd();
+                self.exec_cells.push(exec_cell);
+
+                let cell_idx = self.exec_cells.len() - 1;
+                self.focus_elem = FocusElem::ExecCell(cell_idx);
+                self.push_msg(format!("Exec Cell {} gained focus", cell_idx));
+
                 self.to_show.remove(WhatToShow::CmdPicker);
             } else {
                 self.push_msg(&"No cmd_idx");
             }
         },
-        _ => self.push_msg(&format!("Unhandled key event on StatefulList {:?}", kev))
+        _ => self.push_msg(format!("Unhandled key event on StatefulList {:?}", kev))
     }
   }
 
-  pub fn push_msg(&mut self, msg: &dyn AsRef<str>)
-  {
+  pub fn push_msg<S: AsRef<str>>(&mut self, msg: S) {
     self.msgs.items.push(msg.as_ref().to_owned())
   }
 
-  /*
-  pub fn on_up(&mut self) {
-    self.push_msg(&"Unhandled event: on_up");
-  }
-  pub fn on_right(&mut self) {
-    // self.push_msg("Unhandled event: on_right");
-    self.tabs.next()
-  }
-
-  pub fn on_down(&mut self) {
-    let a = &"asd";
-    self.push_msg(&"Unhandled event: on_down");
-  }
-    */
-
-
   pub fn on_tick(&mut self) {
-    // eprintln!("Unhandled event: on_tick");
-  }
+    let now = Utc::now();
+    self.push_msg(format!("{}: Unhandled event: on_tick", now));
 
+    for cell in &mut self.exec_cells {
+        if let Some(exec_info) = &cell.exec_info {
+            let rcvr = &exec_info.output_receiver;
+
+            for _i in 0..1000 {
+                match rcvr.try_recv() {
+                    Ok(msg) => {
+                        match msg.typ {
+                            CmdMsgType::StdOut => cell.stdout.push(msg.content),
+                            CmdMsgType::StdErr => cell.stderr.push(msg.content)
+                        }
+                    }
+                    Err(err) => {
+                        match err {
+                        
+                        }                           
+
+                    }
+                }
+            }
+        }
+    }
+  }
 }
+

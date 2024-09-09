@@ -1,3 +1,9 @@
+
+Label  {
+    padding: 1 2;
+}
+
+
 /*#cmd-groups {*/
 /*    height: 100%;*/
 /*    width: 100%;*/
@@ -24,19 +30,11 @@
 /*    border: darkorange;*/
 /*}*/
 
-Screen {
-    layers: base overlay;
-    layout: horizontal;
-}
-
-Label  {
-    padding: 1 2;
-}
 
 #right-pane {
     height: 100%;
-    width: 50%;
-    background: #cc0a0a;
+    width: 100%;
+    background: #0a0a0a;
 }
 
 /* inside right-pane */
@@ -58,13 +56,13 @@ Label  {
 SideBarContainer {
     /* height: 100%; */
     /* layer: overlay; */
-    /* dock: left; */
-    /* layer: overlay; */
+    dock: left;
+    layer: overlay;
 }
 
 CmdGroupsSidebar {
-    /* dock: left; */
-    /* layer: overlay; */
+    dock: left;
+    layer: overlay;
     width: 25;
     height: 100%;
     background: $panel;
